@@ -1,6 +1,6 @@
 
 from colorama import Fore as cor
-import textwrap
+import textwrap3
 import time
 
 
@@ -30,24 +30,24 @@ def depositar (saldo, valor , extrato, /):
 
     return saldo, extrato
 
-def sacar (*, saldo, valor, extrato, limite, numero_saques, limite_saques,):
+def sacar (*, saldo, valor, extrato, limite, numero_saques, SAQUES_LIMITE,):
 
     excedeu_saldo = valor > saldo
     excedeu_limite = valor > limite
-    excedeu_saques = numero_saques == limite_saques
+    excedeu_saques = SAQUES_LIMITE < numero_saques
 
     if excedeu_saldo:
         print(cor.RED + '\nFalha na Operação \nNão há saldo suficente para essa operação' + cor.RESET)
     elif excedeu_limite:
         print(cor.RED + '\nFalha na Operação \nOperação excedeu o limite de R$500.00 por saque' + cor.RESET)
     elif excedeu_saques:
-        print(cor.RED + '\nFalha na Operação \nOpereação excedeu o limite de saques diário' + cor.RESET)
+        print(cor.RED + '\nFalha na Operação \nOpereação excedeu o limite de 3 saques diário' + cor.RESET)
 
     elif valor > 0:
          saldo -= valor
          extrato += (cor.BLUE + f'\nSaque: R$ {valor:.2f}' + cor.RESET)
-         numero_saques += 1
          print(cor.BLUE + 'Saque Realizado com Sucesso' + cor.RESET)
+
 
     else:
         print(cor.RED + '\nFalha na Operação \nValor inválido' + cor.RESET)
@@ -104,13 +104,13 @@ def lista_contas(contas):
           C/C\t\t{conta['numero_conta']}
           Titular:\t{conta['usuario']['nome']}
 '''
-        linhas.append(textwrap.dedent(linha))
+        linhas.append(textwrap3.dedent(linha))
 
     print('\n')
     print(''.join(linhas))
 
 def main ():
-    LIMITE_SAQUES = 3
+    SAQUES_LIMITE = 3
     AGENCIA = '0001'
 
     saldo = 0
@@ -134,15 +134,14 @@ def main ():
 
         elif opcao == "S":
             valor = float(input(f'\nQual valor você deseja sacar? R$'))
-
-
+            numero_saques += 1
             saldo, extrato = sacar(
                 saldo=saldo,
                 valor=valor,
                 extrato=extrato,
                 limite=limite,
                 numero_saques=numero_saques,
-                limite_saques=LIMITE_SAQUES
+                SAQUES_LIMITE=SAQUES_LIMITE
             )
 
         elif opcao == "E":
@@ -172,6 +171,7 @@ def main ():
 
         else:
             print(cor.RED + "Falha na Operação \nSelecione novamente uma opção válida" + cor.RESET)
+
 
 main()
 
